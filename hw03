@@ -1,0 +1,26 @@
+from urllib.request import Request
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+
+# Send request
+req = Request('https://www.cna.com.tw/news/asoc/202503200249.aspx', headers={'User-Agent' : "Magic Browser"}) 
+html = urlopen(req)
+
+# Parse HTML
+bs = BeautifulSoup(html, 'html.parser')
+
+# Open a text file to write the href values
+with open('links.txt', 'w') as file:
+    # Loop through all <a> tags
+    for link in bs.find_all('a'):
+        if 'href' in link.attrs:
+            # Write the href value into the file
+            file.write(link.attrs['href'] + '\n')
+            print(link.attrs['href'])  # Optional: Print to console as well
+
+# Trigger file download (for Google Colab)
+try:
+    from google.colab import files
+    files.download('links.txt')
+except ImportError:
+    print("Not running in Google Colab, file 'links.txt' saved locally.")
